@@ -1,0 +1,57 @@
+.sunday {
+    background-color: red;
+}
+
+.present {
+    background-color: green;
+}
+
+table {
+    table-layout: fixed;
+    /* Ensures equal column widths */
+    width: 100%;
+    /* Makes the table span the container */
+}
+
+th,
+td {
+    width: {
+            {
+            100 / ($daysInMonth + 2)
+        }
+    }
+
+    %;
+    /* Distributes width equally */
+    text-align: center;
+    /* Centers content */
+    overflow: hidden;
+    /* Prevents content overflow */
+}
+
+.name-container {
+    max-width: 150px;
+    /* Fixed width for the name column */
+    overflow-x: auto;
+    /* Enables horizontal scrolling */
+    white-space: nowrap;
+    /* Prevents text wrapping */
+    padding: 2px;
+    /* Adds padding for better appearance */
+}
+
+.name-container::-webkit-scrollbar {
+    height: 8px;
+    /* Scrollbar height for better visibility */
+}
+
+.name-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Scrollbar color */
+    border-radius: 4px;
+}
+
+.name-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Scrollbar hover color */
+}

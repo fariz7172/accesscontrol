@@ -1,0 +1,117 @@
+.hero {
+    display: inline-block;
+    position: relative;
+    width: 400px;
+    min-width: 500px;
+    height: 700px;
+    border-radius: 30px;
+    overflow:hidden;
+    box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.3);
+    margin: 50px;
+ margin-left: 170px;
+ 
+  }
+  
+  .hero-profile-img {
+    height: 70%;
+  }
+  
+  .hero-description-bk {
+    background-image: linear-gradient(0deg , #3f5efb, #fc466b);
+    border-radius: 30px;
+    position: absolute;
+    top: 75%;
+    left: -5px;
+    height: 65%;
+    width: 128%;
+    transform: skew(19deg, -10deg);
+  }
+  
+  .second .hero-description-bk {
+    background-image: linear-gradient(-20deg , #bb7413, #e7d25c)
+  }
+  
+  .hero-logo {
+    height: 80px;
+    width: 80px;
+    border-radius: 20px;
+    background-color: #fff;
+    position: absolute;
+    bottom: 30%;
+    left: 30px;
+    overflow:hidden;
+    box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.7);
+  }
+  
+  .hero-logo img {
+    height: 100%;
+  }
+  
+  .hero-description {
+    position: absolute;
+    color: #fff;
+    font-weight: 900;
+    left: 150px;
+    bottom: 16%;
+  }
+  
+  .hero-btn {
+    position: absolute;
+    color: #fff;
+    right: 30px;
+    bottom: 10%;
+    padding: 10px 20px;
+    border: 1px solid #fff;
+  }
+  
+  .hero-btn a {
+    color: #fff;
+  }
+  
+  .hero-date {
+    position: absolute;
+    color: #fff;
+    left: 30px;
+    bottom: 10%;
+  }
+  .hero-message{
+    position: absolute;
+    color: #fff;
+    right: 30px;
+    bottom: 12%;
+    font-size: 24px;
+  }
+  /* END CARD DESIGN */
+  
+  body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    background-color: #eee;
+    min-height: 100vh;
+ 
+  }
+  .btn i:before {
+    width: 14px;
+    height: 14px;
+    position: fixed;
+    color: #fff;
+    background: #0077B5;
+    padding: 10px;
+    border-radius: 50%;
+    top:5px;
+    right:5px;
+  }
+
+  .hero-profile-img {
+    width: 100%;
+    /* Membuat gambar memenuhi lebar kontainer */
+    height: auto;
+    /* Memastikan proporsi gambar tetap terjaga */
+}
+
+@media (max-width: 768px) {
+  .hero {
+      margin-left: 0; /* Menghapus margin-left untuk layar kecil */
+      margin: 50px;
+  }
+}

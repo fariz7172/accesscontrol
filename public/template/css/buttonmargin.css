@@ -1,0 +1,30 @@
+
+     /* For small screens */
+     @media (max-width: 768px) {
+        /* Stack the forms vertically */
+        #filterForm {
+            flex-direction: column; /* Change the direction to column */
+            align-items: flex-start; /* Align items to the start */
+        }
+        #csv, #pdf {
+            margin-top: 10px; /* Add some space above the filter button */
+            width: 100%; /* Make filter button full-width */
+        }
+        #date_from, #date_to{
+            width: 90px;
+
+        }
+
+        #excel {
+            margin-top: 10px; /* Add space above export button */
+            width: 100%; /* Make export button full-width */
+        }
+        /* Ensure export forms are also stacked vertically */
+     
+.checking{
+    font-size: 18px;
+    margin-top: 20px;
+    margin-left: 25px;
+}
+       
+    }
