@@ -218,6 +218,12 @@ Route::middleware(['auth'])->group(function () {
             return response()->json(['next_id' => $nextId]);
         })->name('get.next.userid');
 
+        // Get All Device Statuses (Read Only - Polling)
+        Route::get('/device/get-statuses', [deviceController::class, 'getDeviceStatuses'])
+            ->name('device.getStatuses');
+
+
+
         Route::resource('dayzone', DayzoneController::class);
         Route::resource('dayzonedetail', DayzoneDetailController::class);
         Route::post('dayzonedetail/push-to-api', [DayzoneDetailController::class, 'pushToApi'])->name('dayzonedetail.push-to-api');
@@ -392,5 +398,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/user-status/update-status', [UserStatusController::class, 'updateStatus'])->name('user-status.update');
         Route::get('/user-status/export', [UserStatusController::class, 'exportExcel'])->name('user-status.export');
         Route::get('/user-status/hourly', [UserStatusController::class, 'hourly'])->name('user-status.hourly');
+        Route::get('/user-status/export-hourly', [UserStatusController::class, 'exportHourly'])->name('user-status.export-hourly');
     });
 });

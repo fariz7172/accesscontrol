@@ -863,8 +863,17 @@ class deviceController extends Controller
                 'sn' => $request->sn,
             ]);
 
+            $isConnected = $response->status() === 200;
+
+            // Update database flagstatus
+            $device = deviceGateModel::where('sn', $request->sn)->first();
+            if ($device) {
+                $device->flagstatus = $isConnected ? 1 : 0;
+                $device->save();
+            }
+
             // Periksa status respons
-            if ($response->status() === 200) {
+            if ($isConnected) {
                 Log::info('Connection check successful', ['sn' => $request->sn, 'api_url' => $apiUrl]);
                 return response()->json([
                     'success' => true,
@@ -888,6 +897,13 @@ class deviceController extends Controller
                 ], $response->status());
             }
         } catch (\Illuminate\Http\Client\RequestException $e) {
+            // Update database flagstatus on exception
+            $device = deviceGateModel::where('sn', $request->sn)->first();
+            if ($device) {
+                $device->flagstatus = 0;
+                $device->save();
+            }
+
             Log::error('Failed to connect to API', [
                 'sn' => $request->sn,
                 'error' => $e->getMessage(),
@@ -897,6 +913,13 @@ class deviceController extends Controller
                 'message' => 'Mechine Not Connected: ' . $e->getMessage()
             ], 500);
         } catch (\Exception $e) {
+             // Update database flagstatus on exception
+             $device = deviceGateModel::where('sn', $request->sn)->first();
+             if ($device) {
+                 $device->flagstatus = 0;
+                 $device->save();
+             }
+
             Log::error('Error in checkConnection', [
                 'sn' => $request->sn,
                 'error' => $e->getMessage(),
@@ -928,8 +951,17 @@ class deviceController extends Controller
 
             exec($command, $output, $exitCode);
 
+            $isConnected = ($exitCode === 0);
+
+            // Update database flagstatus
+            $device = deviceGateModel::where('ip', $ip)->first();
+            if ($device) {
+                $device->flagstatus = $isConnected ? 1 : 0;
+                $device->save();
+            }
+
             // Check if ping was successful (exit code 0 indicates success)
-            if ($exitCode === 0) {
+            if ($isConnected) {
                 Log::info('Ping successful', ['ip' => $ip, 'output' => $output]);
                 return response()->json([
                     'success' => true,
@@ -952,6 +984,13 @@ class deviceController extends Controller
                 'message' => 'Validation error: ' . implode(', ', $e->errors()['ip'] ?? ['Invalid IP address'])
             ], 422);
         } catch (\Exception $e) {
+             // Update database flagstatus on exception (assume disconnect)
+             $device = deviceGateModel::where('ip', $request->ip)->first();
+             if ($device) {
+                 $device->flagstatus = 0;
+                 $device->save();
+             }
+
             Log::error('Error in ping', [
                 'ip' => $request->ip,
                 'error' => $e->getMessage()
@@ -1026,6 +1065,26 @@ class deviceController extends Controller
             ->orderBy('TM_EVENT', 'desc')
             ->paginate($perPage);
 
-        return view('device.logs', compact('logs'));
+    }
+
+    public function getDeviceStatuses()
+    {
+        // Read directly from DB (updated by Console Command)
+        $devices = deviceGateModel::select('id', 'sn', 'flagstatus')->get();
+        
+        $results = $devices->map(function ($device) {
+            return [
+                'id' => $device->id,
+                'sn' => $device->sn,
+                'connected' => $device->flagstatus == 1,
+                'status_text' => $device->flagstatus == 1 ? 'Connected' : 'Disconnect'
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $results,
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
     }
 }

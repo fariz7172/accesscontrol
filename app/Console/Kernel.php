@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('sync:members')->everyMinute();
+        $schedule->command('device:check-connection')->everyMinute();
     }
 
     /**

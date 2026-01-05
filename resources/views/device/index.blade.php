@@ -91,6 +91,7 @@
                             <th>IP</th>
                             <th>Node ID</th>
                             <th>Status</th>
+                            <th>Status Connection</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -110,13 +111,21 @@
                                 @else
                                 {{ $device->stat }}
                                 @endif
+                               
                             </td>
+                           
+                            <td>
+                                <span class="badge {{ $device->flagstatus == 1 ? 'bg-success' : 'bg-danger' }} device-connection-badge" id="device-conn-{{ $device->id }}">
+                                    {{ $device->flagstatus == 1 ? 'Connected' : 'Disconnect' }}
+                                </span>
+                            </td>
+
                             <td>
                                 <a href="{{ route('device.edit', ['encryptedId' => encryptId($device->id)]) }}"
                                     class="btn btn-warning btn-sm">Edit</a>
                                 <form
                                     action="{{ $device->type == 1 ? route('devices.openGate') : route('devices.open', $device->id) }}"
-                                    method="POST" class="open-device-form" style="display: inline;"
+                                    method="POST" class="open-device-form " style="display: inline; text-color: white"
                                     data-device-id="{{ $device->id }}" data-device-type="{{ $device->type }}"
                                     data-ip="{{ $device->ip }}" data-nodeid="{{ $device->nodeid }}">
                                     @csrf
@@ -198,8 +207,39 @@ window.Laravel.routes = {
     ping: '{{ route('device.ping') }}',
     checkConnection: '{{ route('device.checkConnection') }}',
     setTime: '{{ route('device.setTime') }}',
-    reboot: '{{ route('device.reboot') }}'
+    reboot: '{{ route('device.reboot') }}',
+    getStatuses: '{{ route('device.getStatuses') }}'
 };
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Poll every 1 minute (60000 ms)
+        const pollInterval = 60000;
+
+        function checkConnections() {
+            fetch(window.Laravel.routes.getStatuses)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.data.forEach(device => {
+                            const badge = document.getElementById(`device-conn-${device.id}`);
+                            if (badge) {
+                                badge.className = `badge ${device.connected ? 'bg-success' : 'bg-danger'} device-connection-badge`;
+                                badge.textContent = device.connected ? 'Connected' : 'Disconnect';
+                            }
+                        });
+                        console.log('Devices connection updated at ' + data.timestamp);
+                    }
+                })
+                .catch(error => console.error('Error polling device connections:', error));
+        }
+
+        // Initial check on load (optional, or just wait for first interval)
+        // checkConnections(); 
+
+        setInterval(checkConnections, pollInterval);
+    });
 </script>
 
 <script>
@@ -274,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
 {{-- ======================== SET UNTUK SIMPAN DEVICE ======================= --}}
 <script src="{{ asset('js/device/addUserDevice.js') }}"></script>
 {{-- ======== SET UNTUK SIMPAN  SET TIMER, REBOOT, CHECK CONNECTION, ======== --}}
-<script src="{{ asset('js/device/checkConnection.js') }}"></script>
+<script src="{{ asset('js/device/checkConnection.js') }}?v={{ time() }}"></script>
 
 
 {{-- //////////////////////// CONVERT DATA DESIMAL TO 09012:802102 /////////////////////// --}}

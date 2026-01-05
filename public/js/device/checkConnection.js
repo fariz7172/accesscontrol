@@ -128,6 +128,8 @@ $('#setTimeModal').on('show.bs.modal', function (event) {
                     title: res.success ? 'Connected' : 'Not Connected',
                     text: res.message,
                     timer: 3000
+                }).then(() => {
+                    location.reload();
                 });
             })
             .fail(function() {
@@ -148,6 +150,8 @@ $('#setTimeModal').on('show.bs.modal', function (event) {
                     icon: res.success ? 'success' : 'error',
                     title: res.success ? 'Connected' : 'Not Connected',
                     text: res.message
+                }).then(() => {
+                    location.reload();
                 });
             })
             .fail(function() {

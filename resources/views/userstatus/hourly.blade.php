@@ -43,12 +43,18 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-12 col-lg-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100">Filter</button>
-                    <a href="{{ route('user-status.hourly') }}" class="btn btn-outline-secondary">Reset</a>
+                    <div class="col-12 col-lg-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        <a href="{{ route('user-status.hourly') }}" class="btn btn-outline-secondary">Reset</a>
+                    </div>
                 </div>
-            </div>
-        </form>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-success shadow" id="exportHourlyBtn">
+                        <i class="fas fa-file-excel me-1"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -57,7 +63,7 @@
     <div class="card-header bg-dark text-white">
         <h5 class="mb-0">Hourly Access Data</h5>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
@@ -117,6 +123,18 @@
             window.hourlyTimeout = setTimeout(() => {
                 $('#hourlyFilterForm').submit();
             }, 500);
+        });
+
+        // Export Excel Button
+        $('#exportHourlyBtn').on('click', function() {
+            if (confirm('Export Hourly Data to Excel?')) {
+                const params = new URLSearchParams({
+                    start_date: $('#start_date').val(),
+                    end_date:   $('#end_date').val(),
+                    gate:       $('#gate').val()
+                });
+                window.location.href = '{{ route("user-status.export-hourly") }}?' + params.toString();
+            }
         });
     });
 </script>

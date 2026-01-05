@@ -191,10 +191,10 @@ class UserStatusController extends Controller
             tbl_userlog.USER_ADDR,
             usersprofile.NAME as user_name,
             tbl_userlog.TM_EVENT as last_event,
+            tbl_userlog.DEVICESN,
             devicegate.stat,
             devicegate.name as device_name,
-            departemen.name as dept_name,
-            usersprofile.END_DATE
+            departemen.name as dept_name
         ')
             ->join('devicegate', 'tbl_userlog.DEVICESN', '=', 'devicegate.sn')
             ->join('usersprofile', 'tbl_userlog.USER_ADDR', '=', 'usersprofile.ID')
@@ -207,11 +207,7 @@ class UserStatusController extends Controller
             ->whereBetween(DB::raw('DATE(tbl_userlog.TM_EVENT)'), [$startDate, $endDate])
             ->when($department, fn($q) => $q->where('departemen.name', $department))
             ->when($branch,     fn($q) => $q->where('branch.name', $branch))
-            ->when($gate,       fn($q) => $q->where('devicegate.name', $gate))
-            ->where(function ($q) {
-                $q->whereNull('usersprofile.END_DATE')
-                    ->orWhereRaw('tbl_userlog.TM_EVENT <= usersprofile.END_DATE');
-            });
+            ->when($gate,       fn($q) => $q->where('devicegate.name', $gate));
 
         if ($search) {
             $userStatusesQuery->where(function ($q) use ($search) {
@@ -243,8 +239,7 @@ class UserStatusController extends Controller
             usersprofile.NAME as user_name,
             devicegate.name as device_name,
             devicegate.stat,
-            departemen.name as dept_name,
-            usersprofile.END_DATE
+            departemen.name as dept_name
         ')
             ->join('usersprofile', 'tbl_userlog.USER_ADDR', '=', 'usersprofile.ID')
             ->join('devicegate', 'tbl_userlog.DEVICESN', '=', 'devicegate.sn')
@@ -272,15 +267,7 @@ class UserStatusController extends Controller
 
         foreach ($allUserLogs as $log) {
             $log->tm_event_formatted = Carbon::parse($log->TM_EVENT)->format('Y-m-d H:i:s');
-
-            $eventTime = Carbon::parse($log->TM_EVENT);
-            $endDate   = $log->END_DATE ? Carbon::parse($log->END_DATE) : null;
-
-            if ($endDate && $eventTime->gt($endDate)) {
-                $log->status_display = 'EXPIRED';
-            } else {
-                $log->status_display = ($log->stat == 0) ? 'IN' : 'OUT';
-            }
+            $log->status_display = ($log->stat == 0) ? 'IN' : 'OUT';
         }
 
         return response()->json([
@@ -390,5 +377,15 @@ class UserStatusController extends Controller
     {
         $filename = 'Log_status_Entry' . Carbon::now()->format('Ymd_His') . '.xlsx';
         return Excel::download(new UserLogStatusEntryExport($request), $filename);
+    }
+
+    public function exportHourly(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::today()->toDateString());
+        $endDate   = $request->get('end_date', Carbon::today()->toDateString());
+        $gate      = $request->get('gate');
+
+        $filename = 'Hourly_Access_Report_' . Carbon::now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new \App\Exports\HourlyAccessExport($startDate, $endDate, $gate), $filename);
     }
 }
