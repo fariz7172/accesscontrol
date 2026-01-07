@@ -1,250 +1,692 @@
-# Access Control - Laravel Application
+# Laravel Access Control - Complete API Documentation
 
-Aplikasi **Access Control & Attendance Management System** berbasis Laravel 10 yang terintegrasi dengan perangkat keras Soyal access control devices.
+## 📋 Table of Contents
 
-## 🚀 Fitur Utama
-
-- **Manajemen User/Karyawan** - Profil, kartu akses, fingerprint
-- **Manajemen Device** - Integrasi Soyal access control
-- **Attendance/Absensi** - Shift pattern, time tracking
-- **Leave Management** - Pengajuan dan approval cuti
-- **Personal Trainer Scheduling** - Fitur gym/fitness
-
----
-
-## 📋 Requirements
-
-Sebelum menginstall, pastikan sistem Anda memiliki:
-
-- **PHP** >= 8.1
-- **Composer** >= 2.0
-- **MySQL** >= 5.7 atau **MariaDB** >= 10.3
-- **Node.js** >= 16.x (opsional, untuk asset compilation)
-- **Git**
-
-### PHP Extensions yang Diperlukan:
-- BCMath
-- Ctype
-- Fileinfo
-- JSON
-- Mbstring
-- OpenSSL
-- PDO
-- Tokenizer
-- XML
-- GD (untuk image processing)
+1. [Overview](#overview)
+2. [Quick Start](#quick-start)
+3. [Authentication API](#authentication-api)
+4. [Attendance Report API](#attendance-report-api)
+5. [Open Gate API](#open-gate-api)
+6. [Error Codes](#error-codes)
+7. [Testing](#testing)
+8. [Security](#security)
 
 ---
 
-## 📥 Cara Clone & Install
+## 🌟 Overview
 
-### 1. Clone Repository
+Laravel Access Control API menyediakan 3 kategori utama:
+- **Authentication** - JWT-based login, logout, refresh token
+- **Attendance Report** - Laporan kehadiran karyawan dengan filter lengkap
+- **Open Gate** - Kontrol akses pintu/gate untuk Soyal dan Tasoft devices
 
-```bash
-# Via HTTPS (recommended)
-git clone https://github.com/fariz7172/accesscontrol.git
+**Base URL:** `http://localhost:8000/api`
 
-# Via SSH (jika sudah setup SSH key)
-git clone git@github.com:fariz7172/accesscontrol.git
+**Authentication:** JWT Bearer Token (required untuk semua endpoint kecuali login)
 
-# Masuk ke folder project
-cd accesscontrol
-```
+---
 
-### 2. Install Dependencies
+## 🚀 Quick Start
 
-```bash
-# Install PHP dependencies
-composer install
+### 1. Setup Environment
 
-# Install Node.js dependencies (opsional)
-npm install
-```
-
-### 3. Setup Environment
-
-```bash
-# Copy file environment
-cp .env.example .env
-
-# Generate application key
-php artisan key:generate
-```
-
-### 4. Konfigurasi Database
-
-Edit file `.env` dan sesuaikan dengan database Anda:
-
+Tambahkan ke file `.env`:
 ```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=accesscontrol
-DB_USERNAME=root
-DB_PASSWORD=your_password
+JWT_SECRET=Rg3QEGIKSWqqj7VBrXP732QsuICE10roCsBRbu3Gg8OPC15oKC4s3ko2VFG1sw3V
+JWT_TTL=120
+JWT_REFRESH_TTL=10080
 ```
 
-### 5. Setup Database
-
+Clear cache:
 ```bash
-# Buat database baru di MySQL
-mysql -u root -p
-CREATE DATABASE accesscontrol;
-exit;
-
-# Jalankan migration
-php artisan migrate
-
-# (Opsional) Import sample data
-php artisan db:seed
-```
-
-**Atau import langsung file SQL:**
-```bash
-mysql -u root -p accesscontrol < accesscontrol.sql
-```
-
-### 6. (Opsional) Build Assets
-
-```bash
-npm run build
-# atau untuk development
-npm run dev
-```
-
-### 7. Jalankan Aplikasi
-
-```bash
-php artisan serve
-```
-
-Aplikasi akan berjalan di: **http://localhost:8000**
-
----
-
-## 🔐 Default Login
-
-Setelah setup, gunakan kredensial berikut untuk login:
-
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | admin | admin123 |
-
-> ⚠️ **Penting:** Segera ubah password default setelah login pertama kali!
-
----
-
-## 📁 Struktur Folder
-
-```
-accesscontrol/
-├── app/                    # Application logic
-│   ├── Http/Controllers/   # Controller files
-│   ├── Models/             # Eloquent models
-│   └── ...
-├── config/                 # Configuration files
-├── database/
-│   ├── migrations/         # Database migrations
-│   └── seeders/            # Database seeders
-├── public/                 # Public assets
-├── resources/
-│   └── views/              # Blade templates
-├── routes/
-│   └── web.php             # Web routes
-├── storage/                # Storage files
-└── .env.example            # Environment template
-```
-
----
-
-## ⚙️ Konfigurasi Tambahan
-
-### Storage Link (untuk upload foto)
-
-```bash
-php artisan storage:link
-```
-
-### Cache Configuration
-
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-### Clear Cache
-
-```bash
-php artisan cache:clear
 php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+php artisan cache:clear
 ```
 
----
+### 2. Login & Get Token
 
-## 🔧 Troubleshooting
-
-### Error: "Class not found"
 ```bash
-composer dump-autoload
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "123456"
+  }'
 ```
 
-### Error: "Permission denied" (Linux/Mac)
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "access_token": "eyJ0eXAiOiJKV1Qi...",
+    "token_type": "bearer",
+    "expires_in": 7200,
+    "user": {
+      "id": 1,
+      "username": "admin",
+      "priv": "1"
+    }
+  }
+}
+```
+
+### 3. Use Token for API Calls
+
 ```bash
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
+TOKEN="eyJ0eXAiOiJKV1Qi..."
+
+curl -X POST http://localhost:8000/api/gate/open \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"device_id": 1}'
 ```
 
-### Error: "SQLSTATE Connection refused"
-- Pastikan MySQL/MariaDB sudah running
-- Cek konfigurasi DB_HOST, DB_PORT di .env
+---
 
-### Error: "The Mix manifest does not exist"
+## 🔐 Authentication API
+
+### Base URL
+```
+http://localhost:8000/api/auth
+```
+
+### Endpoints
+
+#### 1. Login
+**POST** `/api/auth/login`
+
+**Request:**
+```json
+{
+  "username": "admin",
+  "password": "123456"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "access_token": "eyJ0eXAiOiJKV1Qi...",
+    "token_type": "bearer",
+    "expires_in": 7200,
+    "user": {
+      "id": 1,
+      "username": "admin",
+      "priv": "1",
+      "bactive": {...}
+    }
+  }
+}
+```
+
+#### 2. Get User Info
+**GET** `/api/auth/me`
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "username": "admin",
+    "priv": "1",
+    "bactive": {...}
+  }
+}
+```
+
+#### 3. Refresh Token
+**POST** `/api/auth/refresh`
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "access_token": "eyJ0eXAiOiJKV1Qi...",
+    "token_type": "bearer",
+    "expires_in": 7200
+  }
+}
+```
+
+#### 4. Logout
+**POST** `/api/auth/logout`
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Successfully logged out"
+}
+```
+
+---
+
+## 📊 Attendance Report API
+
+### Base URL
+```
+http://localhost:8000/api/attendance
+```
+
+### Endpoints
+
+#### 1. Get User Attendance Report
+**POST** `/api/attendance/report`
+
+**Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "user_id": [1, 2, 3],
+  "start_date": "2026-01-01",
+  "end_date": "2026-01-31",
+  "include_details": false
+}
+```
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `user_id` | array | No* | Array of user IDs |
+| `user_name` | string | No* | Search by name (partial match) |
+| `start_date` | string | Yes | Format: YYYY-MM-DD |
+| `end_date` | string | Yes | Format: YYYY-MM-DD |
+| `include_details` | boolean | No | Include daily details (default: false) |
+
+*Note: Minimal satu dari `user_id` atau `user_name` harus diisi
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "period": {
+      "start_date": "2026-01-01",
+      "end_date": "2026-01-31",
+      "total_days": 31
+    },
+    "summary": {
+      "hadir": 20,
+      "alpha": 3,
+      "telat": 5,
+      "ijin": 2,
+      "cuti": 1,
+      "libur": 8
+    },
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "John Doe",
+        "department": "IT Department",
+        "statistics": {
+          "hadir": 20,
+          "alpha": 3,
+          "telat": 5,
+          "ijin": 2,
+          "cuti": 1,
+          "libur": 8
+        }
+      }
+    ]
+  }
+}
+```
+
+#### 2. Get User List
+**GET** `/api/attendance/users`
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Query Parameters:**
+- `search` (optional) - Search by name
+- `department_id` (optional) - Filter by department
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "department": "IT Department"
+    }
+  ]
+}
+```
+
+#### 3. Get Attendance Statistics
+**POST** `/api/attendance/statistics`
+
+**Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "start_date": "2026-01-01",
+  "end_date": "2026-01-31",
+  "department_id": 1
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "period": {
+      "start_date": "2026-01-01",
+      "end_date": "2026-01-31",
+      "total_days": 31
+    },
+    "total_employees": 50,
+    "statistics": {
+      "hadir": 1200,
+      "alpha": 50,
+      "telat": 150,
+      "ijin": 30,
+      "cuti": 20,
+      "libur": 400
+    },
+    "percentage": {
+      "hadir": 64.52,
+      "alpha": 2.69,
+      "telat": 8.06,
+      "ijin": 1.61,
+      "cuti": 1.08,
+      "libur": 21.51
+    }
+  }
+}
+```
+
+### Attendance Status Definitions
+
+| Status | Kondisi | Deskripsi |
+|--------|---------|-----------|
+| **hadir** | `Present = 1` | Karyawan hadir |
+| **alpha** | `Present = 0` dan tidak ada keterangan | Tidak hadir tanpa keterangan |
+| **telat** | `Present = 1` dan `Time_In > Start_In` | Hadir tapi terlambat |
+| **ijin** | Ada `DutyProcessID` (bukan cuti) | Izin sakit, dll |
+| **cuti** | Ada `DutyProcessID` (tipe cuti) | Cuti |
+| **libur** | `DayType = 2` atau `Remark = 'Holiday'` | Hari libur |
+
+---
+
+## 🚪 Open Gate API
+
+### Base URL
+```
+http://localhost:8000/api/gate
+```
+
+### Endpoint
+
+#### Open Gate/Door
+**POST** `/api/gate/open`
+
+**Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Request Body (Option 1 - By Device ID):**
+```json
+{
+  "device_id": 1
+}
+```
+
+**Request Body (Option 2 - By Serial Number):**
+```json
+{
+  "device_sn": "SOYAL123"
+}
+```
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `device_id` | integer | No* | ID device dari database |
+| `device_sn` | string | No* | Serial number device |
+
+*Note: Minimal satu dari `device_id` atau `device_sn` harus diisi
+
+**Response Success (Soyal - Type 1):**
+```json
+{
+  "success": true,
+  "message": "Pintu Main Gate berhasil dibuka",
+  "data": {
+    "device_id": 4,
+    "device_name": "Main Gate",
+    "device_type": 1,
+    "device_sn": "SOYAL123",
+    "ip_address": "192.168.1.100",
+    "opened_at": "2026-01-07 11:00:00",
+    "response_hex": "7E 06 01 21 84 00 A5 0C"
+  }
+}
+```
+
+**Response Success (Tasoft - Type 0/50):**
+```json
+{
+  "success": true,
+  "message": "Pintu Parking Gate berhasil dibuka",
+  "data": {
+    "device_id": 1,
+    "device_name": "Parking Gate",
+    "device_type": 50,
+    "device_sn": "ZYSL20032920",
+    "ip_address": "192.168.1.50",
+    "opened_at": "2026-01-07 11:00:00"
+  }
+}
+```
+
+**Response Error:**
+```json
+{
+  "success": false,
+  "message": "Device not found",
+  "error_code": "DEVICE_NOT_FOUND"
+}
+```
+
+### Device Types
+
+| Type | Name | Connection Method |
+|------|------|-------------------|
+| 1 | Soyal | TCP connection to IP:1621 |
+| 0 | Tasoft | HTTP POST to external API |
+| 50 | Tasoft | HTTP POST to external API |
+
+---
+
+## ⚠️ Error Codes
+
+### HTTP Status Codes
+
+| Code | Description |
+|------|-------------|
+| 200 | Success |
+| 401 | Unauthorized (Invalid/missing token) |
+| 404 | Not Found |
+| 422 | Validation Error |
+| 500 | Internal Server Error |
+
+### Custom Error Codes
+
+| Code | Description |
+|------|-------------|
+| `DEVICE_NOT_FOUND` | Device tidak ditemukan di database |
+| `API_ERROR` | Error dari API eksternal (Tasoft) |
+| `CONNECTION_ERROR` | Gagal connect ke device (TCP/HTTP) |
+| `NO_RESPONSE` | Tidak ada response dari device (Soyal) |
+| `API_URL_NOT_CONFIGURED` | API URL tidak dikonfigurasi |
+| `INTERNAL_ERROR` | Internal server error |
+
+---
+
+## 🧪 Testing
+
+### Automated Test Scripts
+
+**Test JWT Authentication:**
 ```bash
-npm install && npm run build
+test-jwt-api.bat
+```
+
+**Test Attendance API:**
+```bash
+test-attendance-api.bat
+```
+
+**Test Open Gate API:**
+```bash
+test-open-gate-api.bat
+```
+
+### Manual Testing Examples
+
+#### Complete Workflow
+```bash
+# 1. Login
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"123456"}'
+
+# 2. Get Attendance Report
+TOKEN="eyJ0eXAiOiJKV1Qi..."
+
+curl -X POST http://localhost:8000/api/attendance/report \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": [1],
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-31"
+  }'
+
+# 3. Open Gate
+curl -X POST http://localhost:8000/api/gate/open \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"device_id": 1}'
 ```
 
 ---
 
-## 🖥️ Menjalankan dengan Laragon (Windows)
+## 🔒 Security
 
-1. Install [Laragon](https://laragon.org/download/)
-2. Clone project ke folder `C:\laragon\www\accesscontrol`
-3. Buka Laragon dan Start All
-4. Akses via: **http://accesscontrol.test**
+### Best Practices
+
+1. **HTTPS Only** - Always use HTTPS in production
+2. **Token Storage** - Store tokens securely (never in localStorage for sensitive apps)
+3. **Token Expiration** - Access token expires after 2 hours
+4. **Refresh Token** - Use refresh endpoint before token expires
+5. **Logout** - Always logout to invalidate token
+6. **Rate Limiting** - Implement rate limiting to prevent abuse
+7. **Audit Logging** - All API calls are logged for audit trail
+8. **Input Validation** - All inputs are validated before processing
+9. **SQL Injection Prevention** - Using Eloquent ORM
+10. **Error Messages** - No sensitive data exposed in errors
+
+### Token Configuration
+
+- **Access Token TTL**: 120 minutes (2 hours)
+- **Refresh Token TTL**: 10080 minutes (7 days)
+- **Algorithm**: HS256
+- **Token Type**: Bearer
 
 ---
 
-## 📱 API Endpoints
+## 💡 Usage Examples
 
-Aplikasi ini juga menyediakan API untuk integrasi dengan device:
+### JavaScript/Fetch API
 
-| Endpoint | Method | Keterangan |
-|----------|--------|------------|
-| `/api/attendance` | POST | Log attendance |
-| `/api/device/sync` | POST | Sync device data |
+```javascript
+// Login
+async function login(username, password) {
+  const response = await fetch('http://localhost:8000/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  
+  const data = await response.json();
+  if (data.success) {
+    localStorage.setItem('token', data.data.access_token);
+    return data.data;
+  }
+  throw new Error(data.message);
+}
+
+// Get Attendance
+async function getAttendance(userId, startDate, endDate) {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('http://localhost:8000/api/attendance/report', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      user_id: [userId],
+      start_date: startDate,
+      end_date: endDate
+    })
+  });
+  
+  return await response.json();
+}
+
+// Open Gate
+async function openGate(deviceId) {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('http://localhost:8000/api/gate/open', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ device_id: deviceId })
+  });
+  
+  return await response.json();
+}
+```
+
+### PHP/Guzzle
+
+```php
+use GuzzleHttp\Client;
+
+$client = new Client(['base_uri' => 'http://localhost:8000/api/']);
+
+// Login
+$response = $client->post('auth/login', [
+    'json' => [
+        'username' => 'admin',
+        'password' => '123456'
+    ]
+]);
+
+$data = json_decode($response->getBody(), true);
+$token = $data['data']['access_token'];
+
+// Open Gate
+$response = $client->post('gate/open', [
+    'headers' => [
+        'Authorization' => "Bearer $token"
+    ],
+    'json' => [
+        'device_id' => 1
+    ]
+]);
+```
+
+### Python/Requests
+
+```python
+import requests
+
+base_url = 'http://localhost:8000/api'
+
+# Login
+response = requests.post(f'{base_url}/auth/login', json={
+    'username': 'admin',
+    'password': '123456'
+})
+
+data = response.json()
+token = data['data']['access_token']
+
+# Get Attendance
+headers = {'Authorization': f'Bearer {token}'}
+response = requests.post(f'{base_url}/attendance/report', 
+    headers=headers,
+    json={
+        'user_id': [1],
+        'start_date': '2026-01-01',
+        'end_date': '2026-01-31'
+    }
+)
+
+print(response.json())
+```
 
 ---
 
-## 🤝 Contributing
+## 🆘 Troubleshooting
 
-1. Fork repository
-2. Buat branch baru (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
+### Common Issues
+
+#### "Unauthenticated"
+**Cause:** Token expired atau tidak valid  
+**Solution:** Login ulang untuk mendapat token baru
+
+#### "Device not found"
+**Cause:** Device ID/SN tidak ada di database  
+**Solution:** Check database atau gunakan endpoint `/attendance/users` untuk list devices
+
+#### "Gagal terhubung ke perangkat" (Soyal)
+**Cause:** Device offline atau network issue  
+**Solution:** 
+- Check IP address correct
+- Ping device untuk test connectivity
+- Check firewall not blocking port 1621
+
+#### "Bad Request - Data tidak valid" (Tasoft)
+**Cause:** Device tidak terhubung ke server Tasoft  
+**Solution:**
+- Check device online
+- Verify serial number registered
+- Check API URL configured correctly (table `api` id=9)
+
+#### "No users found"
+**Cause:** User ID tidak ada atau nama tidak match  
+**Solution:** Use `/attendance/users` endpoint untuk get valid user IDs
+
+---
+
+## 📞 Support & Contact
+
+Untuk pertanyaan atau issue, silakan hubungi tim development.
+
+**Version:** 1.0.0  
+**Last Updated:** 2026-01-07  
+**Laravel Version:** 10.x  
+**PHP Version:** 8.x
 
 ---
 
 ## 📄 License
 
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
----
-
-## 👨‍💻 Author
-
-**Fariz Ahmad**
-- GitHub: [@fariz7172](https://github.com/fariz7172)
+Copyright © 2026 Soyal Access Control Team. All rights reserved.
