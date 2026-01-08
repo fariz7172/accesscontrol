@@ -1,0 +1,239 @@
+{
+	"info": {
+		"_postman_id": "a2d249c0-c197-4703-b3a1-f7005ce986f9",
+		"name": "API ACCESSCONTROL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24180523",
+		"_collection_link": "https://lunar-sunset-1276.postman.co/workspace/tes~69826fd3-1a95-4460-b506-17d3a7b608aa/collection/24180523-a2d249c0-c197-4703-b3a1-f7005ce986f9?action=share&source=collection_link&creator=24180523"
+	},
+	"item": [
+		{
+			"name": "Login API",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njc3NTQ4MDYsImV4cCI6MTc2Nzc2MjAwNiwibmJmIjoxNzY3NzU0ODA2LCJqdGkiOiJSc2xYc0t2Q1Y5MHE2QkxvIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJ1c2VybmFtZSI6ImFkbWluIiwicHJpdiI6IjEiLCJiYWN0aXZlIjp7InVzZXIiOnRydWUsImRldmljZSI6dHJ1ZSwibG9nIjp0cnVlLCJzZXR0aW5nIjp0cnVlLCJ1c2VyQWRtaW4iOnRydWUsImF0dGVuZGFuY2UiOnRydWUsInNjaGVkdWxlIjp0cnVlfX0.QwUEpgaYdZ8dVetA6wBBd0eDmx9pQ6KTmitBv9GrOgk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Attendance Report User Single Day",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njc3NTUxOTAsImV4cCI6MTc2Nzc2MjM5MCwibmJmIjoxNzY3NzU1MTkwLCJqdGkiOiI1cEJqWHUzSnc0U1RKak5XIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJ1c2VybmFtZSI6ImFkbWluIiwicHJpdiI6IjEiLCJiYWN0aXZlIjp7InVzZXIiOnRydWUsImRldmljZSI6dHJ1ZSwibG9nIjp0cnVlLCJzZXR0aW5nIjp0cnVlLCJ1c2VyQWRtaW4iOnRydWUsImF0dGVuZGFuY2UiOnRydWUsInNjaGVkdWxlIjp0cnVlfX0.q0FlVSJiPDR4pAXYto6Xz6tVXgbBs29LGFFETit4FlY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Transfer-Encoding",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": [1, 2, 3,4,5,6,7,8,9],\r\n    \"start_date\": \"2026-01-01\",\r\n    \"end_date\": \"2026-01-31\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/attendance/report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"attendance",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Attendance Report User All Days",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njc3NTUxOTAsImV4cCI6MTc2Nzc2MjM5MCwibmJmIjoxNzY3NzU1MTkwLCJqdGkiOiI1cEJqWHUzSnc0U1RKak5XIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJ1c2VybmFtZSI6ImFkbWluIiwicHJpdiI6IjEiLCJiYWN0aXZlIjp7InVzZXIiOnRydWUsImRldmljZSI6dHJ1ZSwibG9nIjp0cnVlLCJzZXR0aW5nIjp0cnVlLCJ1c2VyQWRtaW4iOnRydWUsImF0dGVuZGFuY2UiOnRydWUsInNjaGVkdWxlIjp0cnVlfX0.q0FlVSJiPDR4pAXYto6Xz6tVXgbBs29LGFFETit4FlY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Transfer-Encoding",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": [1, 2, 3,4,5,6,7,8,9],\r\n    \"start_date\": \"2026-01-01\",\r\n    \"end_date\": \"2026-01-31\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/attendance/report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"attendance",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API GATE",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njc3NTUxOTAsImV4cCI6MTc2Nzc2MjM5MCwibmJmIjoxNzY3NzU1MTkwLCJqdGkiOiI1cEJqWHUzSnc0U1RKak5XIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJ1c2VybmFtZSI6ImFkbWluIiwicHJpdiI6IjEiLCJiYWN0aXZlIjp7InVzZXIiOnRydWUsImRldmljZSI6dHJ1ZSwibG9nIjp0cnVlLCJzZXR0aW5nIjp0cnVlLCJ1c2VyQWRtaW4iOnRydWUsImF0dGVuZGFuY2UiOnRydWUsInNjaGVkdWxlIjp0cnVlfX0.q0FlVSJiPDR4pAXYto6Xz6tVXgbBs29LGFFETit4FlY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Transfer-Encoding",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": [1, 2, 3,4,5,6,7,8,9],\r\n    \"start_date\": \"2026-01-01\",\r\n    \"end_date\": \"2026-01-31\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/attendance/report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"attendance",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Attendance Report By Name",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

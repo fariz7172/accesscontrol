@@ -1,0 +1,93 @@
+database privilage
+
+-- Add the bactive column as TEXT without a DEFAULT value
+ALTER TABLE userlogin
+ADD COLUMN bactive TEXT NULL;
+
+-- Set a valid JSON string for all existing rows
+UPDATE userlogin
+SET bactive = '{"user": false, "device": false, "log": true, "setting": false,"userAdmin": false}'
+WHERE bactive IS NULL;
+
+
+--ISSUE--
+
+////SQL QUERI UNTUK INSERT CARD PADA TABLE tbl_userlog yang field nya card ,(Jika nilai card pada device Tasoft = null  , maka gunakan triger ini)
+DELIMITER $$
+
+CREATE TRIGGER fill_userlog_card 
+BEFORE INSERT ON tbl_userlog
+FOR EACH ROW
+BEGIN
+    DECLARE user_card VARCHAR(255);
+    
+    -- Ambil nilai 'Card' dari tabel usersprofile berdasarkan USER_ADDR
+    SELECT Card INTO user_card 
+    FROM usersprofile 
+    WHERE ID = NEW.USER_ADDR;
+    
+    -- Jika ditemukan, isi nilai card di tbl_userlog
+    IF user_card IS NOT NULL THEN
+        SET NEW.card = user_card;
+    END IF;
+END$$
+
+DELIMITER ;
+
+///END ISSUE/////
+
+http://dreamposcloud.com:8789
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*jalankan schedule untuk get data Dreampos kirim ke mesin*
+php artisan schedule:work  <--- Otomatis
+php artisan sync:members   <--- Manual
+
+
+*Proses akan berjalan jika mesin terhubung (tasoft finger print) kedalam jaringan 
+fungsi ini akan megirim data pada aplikasi DREAMPOS ditable cld_member dan meyimpan kedalam databse accesssoyal*
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*menjalankan fungsi menangkap data yang dikirim mesin soyal ke dalam database *
+php artisan tcp:server  <--- Get data Mesin Soyal
+
+untuk setingan mesin soyal
+Networksetting
+
+http://192.168.100.127/ 
+LAN IP Address 192.168.100.127  (SEGMEN IP HARUS SAMA DENGAN LAPTOP ATAU KOMPUTER)
+LAN Net Mask 255.255.255.0 
+Default Gateway 192.168.1.254 
+Primary DNS Server 168.95.1.1 
+Secondary DNS Server 168.95.192.1 
+MAC Address 00-13-57-00-98-99 
+TCP Listen Port 1621 
+HTTP Server Port 80 
+Socket Timeout 120 
+Area ID (0~15) 0 
+Node ID (Device ID) 1 
+Message Server IP 1st 192.168.100.25 (isi dengan IP KOMPUTER ATAU LAPTOP)
+Message Port 1st 8031 
+Message Server IP 2nd 0.0.0.0 
+Message Port 2nd 0
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*membuat database dan seeder sebagai data nya*
+php artisan migrate:refresh --seed    <--- Create Database
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*PENTING BIAR GA BINGUNG
+
+Untuk mesin Tasoft Fingerprint untuk card akan berubah karena WG 26 BIT (Nilai Kartu TIDAK SESUAI DENGAN MESIN Tasoft FACE dan soyal)
+
+Maka Sesuaikan Bit rate card yang akan dipakai 
+tetapi jika tidak memakai mesin Tasoft Face maka WG 32 card number akan sesuai nilai Card nya
+Tasoft Face , Soyal, Nilai memkai WG 32 contoh kartu 555829840
+tapi nilai pada Tasoft Finger nilai kartu 6116459
+
+SOLUSINYA IKUTI MESIN KE NILAI WG TERENDAH YAITU MESIN TASFOFT FINGERPRINT
+
+DAN untuk Card Expired Mesin Tasoft Finger print tidak bisa di set jam tetapi hari
+jika ditanggal 01 oktober habis ,,selama hari itu 00:00 - 23:59 Kartu masih bisa digunakan
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Untuk Data Log yang masuk kedalam table tbl_userlog device soyal berada pada folder command TcpServerCommand.php dan Job/SaveToTCPLog.blade.php

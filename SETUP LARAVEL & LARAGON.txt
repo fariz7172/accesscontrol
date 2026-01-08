@@ -1,0 +1,23 @@
+SETUP LARAVEL & LARAGON
+
+
+INSTAL LARAGON
+
+SET EXTENTION PHP 
+GD,ZIP,SOCKET
+
+SIMPAN PROJECT LARAVEL DI DALAM 
+C:\laragon\www
+
+buka terminal laragon
+masuk kedalam path C:\laragon\www\accesscontrol
+
+composer dump-autoload
+composer install
+copy .env.example .env
+php artisan key:generate
+
+php artisan migrate --seed
+php artisan optimize:clear
+
+jalankan nama Projec.test

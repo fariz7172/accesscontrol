@@ -1,0 +1,55 @@
+/*
+SQLyog Professional v12.5.1 (64 bit)
+MySQL - 8.0.12 : Database - accesscontrol_baru
+*********************************************************************
+*/
+
+/*!40101 SET NAMES utf8 */;
+
+/*!40101 SET SQL_MODE=''*/;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`accesscontrol_baru` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+
+USE `accesscontrol_baru`;
+
+/*Table structure for table `devicegate` */
+
+DROP TABLE IF EXISTS `devicegate`;
+
+CREATE TABLE `devicegate` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `number` int(11) DEFAULT '0',
+  `flagstatus` int(4) DEFAULT '0',
+  `type` int(11) DEFAULT NULL COMMENT 'type 0 Finger, 50 face, 1 soyal',
+  `sn` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nodeid` int(5) DEFAULT '0' COMMENT 'nodeid soyal',
+  `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT 'untuk keterangan',
+  `groupid` int(11) DEFAULT '0',
+  `stat` tinyint(4) DEFAULT '0' COMMENT '0=IN, 1=Out',
+  `Lift1` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT 'Setting Lift 1- 16',
+  `Lift2` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT 'Setting Lift 17- 32',
+  `Lift3` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT 'Setting Lift 33- 48',
+  `Lift4` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT 'Setting Lift 49- 64',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `devicegate` */
+
+insert  into `devicegate`(`id`,`name`,`number`,`flagstatus`,`type`,`sn`,`ip`,`nodeid`,`description`,`groupid`,`stat`,`Lift1`,`Lift2`,`Lift3`,`Lift4`) values 
+(1,'GATE1',1,1,1,'ZYSL20032920','192.168.100.128',1,'LOBBY UTAMA',4,0,1,2,0,0),
+(2,'GATE2',1,1,50,'ZXRL23103798','192.168.100.224',1,'Mesin Face',0,1,0,0,0,0),
+(4,'DeviceKecil',4,1,0,'ZYSL20032921','192.168.100.129',5,'devicekecil',0,0,0,0,0,0),
+(9,'Soyal Mesin',3,1,1,'SOYAL antai 3','192.168.100.127',3,'Mesin Soyal',1,1,7,0,0,0),
+(19,'mantap',19,1,1,'AYSG0122221','192.168.100.213',19,'3131',0,0,1,0,0,0),
+(20,'admin',14,1,1,'AYSG0122214','192.168.100.114',14,'212',0,0,0,0,0,0);
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

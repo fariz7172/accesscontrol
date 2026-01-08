@@ -1,0 +1,73 @@
+/*
+SQLyog Professional v12.5.1 (64 bit)
+MySQL - 8.0.12 : Database - accesscontrol_baru
+*********************************************************************
+*/
+
+/*!40101 SET NAMES utf8 */;
+
+/*!40101 SET SQL_MODE=''*/;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`accesscontrol_baru` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+
+USE `accesscontrol_baru`;
+
+/*Table structure for table `tbl_userlog` */
+
+DROP TABLE IF EXISTS `tbl_userlog`;
+
+CREATE TABLE `tbl_userlog` (
+  `REC_INDEX` bigint(20) NOT NULL AUTO_INCREMENT,
+  `USER_ADDR` int(15) DEFAULT NULL,
+  `TM_EVENT` datetime DEFAULT NULL,
+  `DEVICESN` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IMGPATH` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `devicetype` int(11) DEFAULT NULL,
+  `card` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `stat` tinyint(4) DEFAULT '0' COMMENT '0=Normal, 1=expired',
+  PRIMARY KEY (`REC_INDEX`),
+  UNIQUE KEY `tbl_userlog_unique1` (`USER_ADDR`,`TM_EVENT`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `tbl_userlog` */
+
+insert  into `tbl_userlog`(`REC_INDEX`,`USER_ADDR`,`TM_EVENT`,`DEVICESN`,`IMGPATH`,`devicetype`,`card`,`stat`) values 
+(2,2,'2025-12-02 10:18:21','ZYSL20032920',NULL,2,'1519624183',0),
+(3,2,'2025-12-02 10:21:35','SOYAL antai 3',NULL,2,'1519624183',0),
+(4,0,'2025-12-02 10:30:55','SOYAL antai 3','',2,'',0),
+(5,2,'2025-12-02 10:32:44','SOYAL antai 3','',2,'1519624183',0),
+(6,4,'2025-12-02 10:33:01','SOYAL antai 3','',2,'7036483',1),
+(7,2,'2025-12-02 10:40:18','SOYAL antai 3','',2,'1519624183',0),
+(8,4,'2025-12-02 10:43:38','SOYAL antai 3','',2,'7036483',1),
+(9,4,'2025-12-02 10:44:46','SOYAL antai 3','',2,'7036483',1),
+(10,2,'2025-12-02 10:45:02','SOYAL antai 3','',2,'1519624183',0),
+(11,4,'2025-12-02 10:45:17','SOYAL antai 3','',2,'7036483',1),
+(12,4,'2025-12-02 10:46:14','SOYAL antai 3','',2,'7036483',1),
+(13,2,'2025-12-02 10:46:25','SOYAL antai 3','',2,'1519624183',0),
+(14,4,'2025-12-02 10:48:58','SOYAL antai 3','',2,'7036483',1),
+(15,4,'2025-12-02 10:50:26','SOYAL antai 3','',2,'7036483',1),
+(16,2,'2025-12-02 10:50:35','SOYAL antai 3','',2,'1519624183',0),
+(17,4,'2025-12-02 10:51:24','SOYAL antai 3','',2,'7036483',1),
+(18,2,'2025-12-02 10:51:35','SOYAL antai 3','',2,'1519624183',0),
+(19,4,'2025-12-02 10:52:26','SOYAL antai 3','',2,'7036483',1),
+(20,2,'2025-12-02 10:52:36','SOYAL antai 3','',2,'1519624183',0),
+(21,2,'2025-12-02 10:58:34','SOYAL antai 3','',2,'1519624183',0),
+(22,4,'2025-12-02 10:58:39','SOYAL antai 3','',2,'7036483',1),
+(23,4,'2025-12-02 11:05:38','SOYAL antai 3','',2,'7036483',1),
+(24,2,'2025-12-02 11:06:08','SOYAL antai 3','',2,'1519624183',0),
+(25,4,'2025-12-02 11:06:56','SOYAL antai 3','',2,'7036483',1),
+(26,4,'2025-12-02 11:13:50','SOYAL antai 3','',2,'7036483',1),
+(27,4,'2025-12-02 11:22:54','SOYAL antai 3','',2,'7036483',1),
+(28,2,'2025-12-02 11:23:04','SOYAL antai 3','',2,'1519624183',0),
+(29,4,'2025-12-02 11:23:26','SOYAL antai 3','',2,'7036483',1),
+(30,2,'2025-12-02 11:23:33','SOYAL antai 3','',2,'1519624183',0),
+(31,4,'2025-12-02 11:47:01','SOYAL antai 3','',2,'7036483',1);
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
